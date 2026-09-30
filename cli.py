@@ -1,7 +1,11 @@
+import os
+import functions
+
+
 def repl():
-    todos = []
+    todos = functions.get_todos()
     while True:
-        parts = input("add, show, exit: ").strip().split(maxsplit=1)
+        parts = input("add, show, edit, exit: ").strip().split(maxsplit=1)
         if not parts:
             print("Введіть команду")
             continue
@@ -13,11 +17,29 @@ def repl():
                 print("\tВведіть тудушку")
                 continue
             todos.append(argument)
+            functions.write_todos(todos)
         elif command == "show":
             if not todos:
                 print("\tСписок поржній")
             for number, todo in enumerate(todos, start=1):
                 print(f"{number} -- {todo}")
+
+        elif command == "edit":
+            try:
+                number = int(argument)
+                if number < 1 or number > len(todos):
+                    raise IndexError
+                new_todo = input("Введіть новий текст: ").strip()
+                if not new_todo:
+                    print("\tВведіть тудушку")
+                    continue
+
+                todos[number - 1] = new_todo
+                functions.write_todos(todos)
+            except ValueError:
+                print("Введіть цілий номер тудушки")
+            except IndexError:
+                print("Невірний номер тудушки")
         elif command == "exit":
             break
         else:
@@ -25,6 +47,11 @@ def repl():
 
 
 def main():
+    os.makedirs("data", exist_ok=True)
+    if not os.path.exists(functions.FILEPATH):
+        with open(functions.FILEPATH, "w", encoding="utf-8"):
+            pass
+
     repl()
 
 
