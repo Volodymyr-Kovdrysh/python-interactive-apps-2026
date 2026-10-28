@@ -1,4 +1,5 @@
 import functions
+import core
 
 
 def do_add(todos, argument):
@@ -11,8 +12,7 @@ def do_add(todos, argument):
     if not argument:
         print("\tВведіть тудушку")
         return True
-    todos.append(argument)
-    functions.write_todos(todos)
+    core.add_todo(todos, argument)
     return True
 
 
@@ -46,8 +46,8 @@ def do_edit(todos, argument):
     if not new_todo:
         print("\tВведіть тудушку")
         return True
-    todos[number - 1] = new_todo
-    functions.write_todos(todos)
+
+    core.edit_todo(todos, number, new_todo)
     return True
 
 
@@ -61,8 +61,7 @@ def do_complete(todos, argument):
     number = int(argument)
     if number < 1 or number > len(todos):
         raise IndexError
-    completed_todo = todos.pop(number - 1)
-    functions.write_todos(todos)
+    completed_todo = core.complete_todo(todos, number)
     print(f'Виконано: "{completed_todo}"')
     return True
 
@@ -77,6 +76,26 @@ def do_exit(todos, argument):
     return False
 
 
+def do_count(todos, argument):
+    """Показує кількість справ; argument не використовуємо; повертає True."""
+    print(f"Кількість тудушок: {core.count_todos(todos)}")
+    return True
+
+
+def do_clear(todos, argument):
+    """Очищує список і файл; argument не використовуємо; повертає True."""
+    core.clear_todos(todos)
+    print("Список тудушок очищено.")
+    return True
+
+
+def do_backup(todos, argument):
+    """Копіює збережений файл; параметри не використовуємо; повертає True."""
+    backup_file = core.backup_todos()
+    print(f"Резервну копію створено: {backup_file}")
+    return True
+
+
 # Таблиця команд
 COMMANDS = {
     "add": do_add,
@@ -84,6 +103,9 @@ COMMANDS = {
     "show": do_show,
     "edit": do_edit,
     "complete": do_complete,
+    "count": do_count,
+    "clear": do_clear,
+    "backup": do_backup,
 }
 
 
